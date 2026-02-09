@@ -29,7 +29,7 @@ Create a `.env` file in the project root:
 BRAND_DEV_API_KEY=your_brand_dev_key_here
 ```
 
-Want to kick the tires first? Here's my free trial key — at time of writing it has about 30 credits left, so be gentle with it:
+Or use this trial key to try it out (roughly 30 credits remaining as of Feb 2026):
 
 ```
 BRAND_DEV_API_KEY=brand_bac1041f6c1d430a86c101217d0d386c
