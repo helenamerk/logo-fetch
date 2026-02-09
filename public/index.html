@@ -168,6 +168,41 @@
     .status.success { color: #5cb870; }
     .status.info { color: #8a8579; }
 
+    .sad-dog {
+      display: none;
+      margin-top: 24px;
+      padding: 24px;
+      border: 1px solid #2a2925;
+      border-radius: 12px;
+      text-align: center;
+      background: #161614;
+    }
+
+    .sad-dog.visible { display: block; }
+
+    .sad-dog-art {
+      font-size: 11px;
+      line-height: 1.35;
+      font-family: monospace;
+      color: #6b665c;
+      margin-bottom: 14px;
+      white-space: pre;
+    }
+
+    .sad-dog p {
+      color: #8a8579;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .sad-dog a {
+      color: #a78bfa;
+      text-decoration: none;
+    }
+
+    .sad-dog a:hover { text-decoration: underline; }
+
     .coffee {
       margin-top: 32px;
       padding-top: 20px;
@@ -313,6 +348,18 @@
     </button>
 
     <div class="status" id="status"></div>
+
+    <div class="sad-dog" id="sad-dog">
+      <div class="sad-dog-art">    /^ ^\
+   / 0 0 \
+   V\ Y /V
+    / - \
+   /    |
+  V__) ||</div>
+      <p>The hosted API ran out of credits because not enough people bought me a coffee.</p>
+      <p>But it's open source! Run it yourself for free:<br><a href="https://github.com/helenamerk/logo-fetch" target="_blank" rel="noopener">github.com/helenamerk/logo-fetch</a></p>
+      <a href="https://buymeacoffee.com/helenamerk" target="_blank" rel="noopener" style="display:inline-block;background:#FFDD00;color:#111110;font-weight:600;font-size:13px;padding:8px 16px;border-radius:8px;margin-top:4px;text-decoration:none;">Help bring it back</a>
+    </div>
 
     <div class="game-wrap" id="game-wrap">
       <canvas id="game" width="440" height="120"></canvas>
@@ -593,6 +640,14 @@
 
         if (!res.ok) {
           const data = await res.json().catch(() => null);
+          const isCredits = res.status === 422 || (data?.failures || []).some(
+            f => /api.key|credit|quota|limit|unauthorized|403|401/i.test(f.reason || "")
+          );
+          if (isCredits) {
+            setStatus("", "");
+            document.getElementById("sad-dog").classList.add("visible");
+            return;
+          }
           const msg = data?.error || "Something went wrong (" + res.status + ")";
           setStatus(msg, "error");
           return;
