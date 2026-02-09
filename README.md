@@ -4,6 +4,8 @@ Download high-quality company wordmark logos (with the company name visible) for
 
 Give it a company name, get back the logo file. Supports SVG and PNG, light and dark modes, and batch downloads.
 
+**Try it now:** [fetch-logo.vercel.app](https://fetch-logo.vercel.app)
+
 ## Setup
 
 ### 1. Create a free Brand.dev account
