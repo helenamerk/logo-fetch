@@ -1,0 +1,32 @@
+{
+  "name": "logo-fetch",
+  "version": "1.0.0",
+  "description": "Instantly retrieve a company logo given a company name",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "logo-fetch": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "keywords": [
+    "logo",
+    "company",
+    "brand",
+    "favicon",
+    "avatar"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.74.0",
+    "brand.dev": "^0.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.2",
+    "typescript": "^5.9.3"
+  }
+}
