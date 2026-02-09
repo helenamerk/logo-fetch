@@ -10,9 +10,9 @@ Give it a company name, get back the logo file. Supports SVG and PNG, light and 
 
 This tool uses Brand.dev to fetch logos. Create a free account (no credit card required):
 
-https://www.brand.dev/o/d156e380-2fa2-431c-ae6c-9bd994672802
+https://www.brand.dev
 
-> We have no affiliation with Brand.dev and receive nothing from people using this link.
+> We have no affiliation with Brand.dev and receive nothing from promoting them.
 
 ### 2. Install dependencies
 
