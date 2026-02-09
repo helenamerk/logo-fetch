@@ -77,8 +77,7 @@ function printHelp() {
 
       BRAND_DEV_API_KEY=your_key_here
 
-    Optionally, set ANTHROPIC_API_KEY to enable company name -> domain lookup.
-    Without it, use --domain to specify the company website directly.
+    You can also use --domain to look up by website instead of company name.
   `.trimEnd());
 }
 

@@ -1,18 +1,19 @@
 import BrandDev from "brand.dev";
 import type { LogoResult, LogoFetchOptions } from "./types.js";
 
-export async function fetchLogos(
-  domain: string,
-  opts: LogoFetchOptions = {},
-): Promise<LogoResult[]> {
-  const client = new BrandDev({
+function createClient(opts: LogoFetchOptions): BrandDev {
+  return new BrandDev({
     apiKey: opts.brandDevApiKey ?? process.env["BRAND_DEV_API_KEY"],
   });
+}
 
-  const result = await client.brand.retrieve({ domain });
-  const logos = result.brand?.logos;
-  if (!logos || logos.length === 0) return [];
-
+function parseLogos(
+  logos: NonNullable<
+    NonNullable<
+      Awaited<ReturnType<BrandDev["brand"]["retrieve"]>>["brand"]
+    >["logos"]
+  >,
+): LogoResult[] {
   return logos
     .filter((logo) => !!logo.url)
     .map((logo): LogoResult => {
@@ -26,6 +27,22 @@ export async function fetchLogos(
         height: logo.resolution?.height ?? null,
       };
     });
+}
+
+export async function fetchLogosByDomain(
+  domain: string,
+  opts: LogoFetchOptions = {},
+): Promise<LogoResult[]> {
+  const result = await createClient(opts).brand.retrieve({ domain });
+  return parseLogos(result.brand?.logos ?? []);
+}
+
+export async function fetchLogosByName(
+  name: string,
+  opts: LogoFetchOptions = {},
+): Promise<LogoResult[]> {
+  const result = await createClient(opts).brand.retrieveByName({ name });
+  return parseLogos(result.brand?.logos ?? []);
 }
 
 export function pickBestLogo(

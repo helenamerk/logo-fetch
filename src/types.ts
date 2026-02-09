@@ -15,13 +15,11 @@ export interface LogoResult {
 export interface LogoFetchOptions {
   /** Brand.dev API key — defaults to BRAND_DEV_API_KEY env var */
   brandDevApiKey?: string;
-  /** Anthropic API key for name→domain resolution — defaults to ANTHROPIC_API_KEY env var */
-  anthropicApiKey?: string;
   /** Prefer a specific mode: "light" or "dark" */
   mode?: "light" | "dark";
   /** Prefer SVG format (default: true) */
   preferSvg?: boolean;
-  /** Skip LLM resolution if you already know the domain */
+  /** Skip name lookup, use this domain directly */
   domain?: string;
 }
 

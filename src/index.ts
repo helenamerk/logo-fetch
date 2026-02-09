@@ -1,17 +1,15 @@
 export type { LogoResult, LogoFetchOptions, BatchLogoResult } from "./types.js";
-export { resolveCompanyDomain } from "./resolve.js";
-export { fetchLogos, pickBestLogo } from "./sources.js";
+export { fetchLogosByDomain, fetchLogosByName, pickBestLogo } from "./sources.js";
 
-import { resolveCompanyDomain } from "./resolve.js";
-import { fetchLogos, pickBestLogo } from "./sources.js";
+import { fetchLogosByDomain, fetchLogosByName, pickBestLogo } from "./sources.js";
 import type { LogoFetchOptions, LogoResult, BatchLogoResult } from "./types.js";
 
-async function getDomain(
+async function fetchLogos(
   company: string,
   opts: LogoFetchOptions,
-): Promise<string> {
-  if (opts.domain) return opts.domain;
-  return resolveCompanyDomain(company, opts.anthropicApiKey);
+): Promise<LogoResult[]> {
+  if (opts.domain) return fetchLogosByDomain(opts.domain, opts);
+  return fetchLogosByName(company, opts);
 }
 
 /**
@@ -27,8 +25,7 @@ export async function getLogo(
   company: string,
   opts: LogoFetchOptions = {},
 ): Promise<LogoResult | null> {
-  const domain = await getDomain(company, opts);
-  const logos = await fetchLogos(domain, opts);
+  const logos = await fetchLogos(company, opts);
   return pickBestLogo(logos, opts);
 }
 
@@ -39,8 +36,7 @@ export async function getAllLogos(
   company: string,
   opts: LogoFetchOptions = {},
 ): Promise<LogoResult[]> {
-  const domain = await getDomain(company, opts);
-  return fetchLogos(domain, opts);
+  return fetchLogos(company, opts);
 }
 
 /**

@@ -21,20 +21,15 @@ npm install
 npm run build
 ```
 
-### 3. Add your API keys
+### 3. Add your API key
 
 Create a `.env` file in the project root:
 
 ```
 BRAND_DEV_API_KEY=your_brand_dev_key_here
-ANTHROPIC_API_KEY=your_anthropic_key_here    # optional, for company name lookup
 ```
 
-The **Brand.dev key** is required. The **Anthropic key** is optional — it lets you type company names (e.g. "Stripe") instead of domains. Without it, use `--domain stripe.com`.
-
-## Usage
-
-### CLI
+### Usage
 
 ```bash
 # Download a single company logo
@@ -52,7 +47,7 @@ node dist/cli.js Stripe --all
 # Just print the URL (don't download)
 node dist/cli.js Stripe --url
 
-# Use a domain directly (no Anthropic key needed)
+# Use a domain directly
 node dist/cli.js --domain stripe.com
 ```
 
@@ -78,7 +73,7 @@ for (const r of results) {
 // Get all logo variants (light/dark, wordmark/icon)
 const all = await getAllLogos("Stripe");
 
-// Skip AI lookup if you know the domain
+// Skip name lookup if you know the domain
 const logo2 = await getLogo("Stripe", { domain: "stripe.com" });
 
 // Prefer dark mode
@@ -87,6 +82,6 @@ const dark = await getLogo("Stripe", { mode: "dark" });
 
 ## How it works
 
-1. **Company name resolution** — Uses Claude (Anthropic) to resolve a company name to its website domain
-2. **Logo fetching** — Queries Brand.dev for all logo variants (wordmarks, icons, light/dark modes, SVG/PNG)
-3. **Smart selection** — Picks the best logo for your use case: prefers wordmarks (with company name) over icons, SVG over raster, and respects your light/dark preference
+1. **Company name lookup** — Brand.dev resolves the company name to its brand profile
+2. **Logo fetching** — Retrieves all logo variants (wordmarks, icons, light/dark modes, SVG/PNG)
+3. **Smart selection** — Picks the best logo: prefers wordmarks (with company name) over icons, SVG over raster, and respects your light/dark preference
