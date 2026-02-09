@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logo Fetch</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #111110;
+      color: #e8e5e0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #1c1b19;
+      border: 1px solid #2a2925;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      color: #8a8579;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #a39e93;
+      margin-bottom: 6px;
+    }
+
+    .hint {
+      color: #6b665c;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: #111110;
+      border: 1px solid #2a2925;
+      border-radius: 8px;
+      color: #e8e5e0;
+      font-family: inherit;
+      font-size: 14px;
+      padding: 12px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    textarea:focus {
+      border-color: #a78bfa;
+    }
+
+    textarea::placeholder {
+      color: #4a473f;
+    }
+
+    .mode-section {
+      margin-top: 20px;
+    }
+
+    .toggle-group {
+      display: inline-flex;
+      background: #111110;
+      border: 1px solid #2a2925;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .toggle-group input { display: none; }
+
+    .toggle-group label {
+      display: inline-block;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b665c;
+      cursor: pointer;
+      margin: 0;
+      transition: background 0.15s, color 0.15s;
+      user-select: none;
+    }
+
+    .toggle-group input:checked + label {
+      background: #2a2925;
+      color: #e8e5e0;
+    }
+
+    #download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 28px;
+      padding: 12px;
+      background: linear-gradient(135deg, #a78bfa, #c084fc, #e879f9);
+      background-size: 200% 200%;
+      color: #111110;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.15s, background-position 0.4s;
+    }
+
+    #download-btn:hover:not(:disabled) {
+      background-position: 100% 100%;
+      filter: brightness(1.1);
+    }
+
+    #download-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(167,139,250,0.3);
+      border-top-color: #111110;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #download-btn.loading .spinner { display: block; }
+    #download-btn.loading .btn-text { display: none; }
+
+    .status {
+      margin-top: 16px;
+      font-size: 13px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .status.error { color: #e05545; }
+    .status.success { color: #5cb870; }
+    .status.info { color: #8a8579; }
+
+    .coffee {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid #2a2925;
+      text-align: center;
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      overflow: hidden;
+      transition: grid-template-rows 0.5s ease, opacity 0.5s ease 0.2s, margin-top 0.5s ease, padding-top 0.5s ease;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .coffee.visible {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid #2a2925;
+    }
+
+    .coffee-inner {
+      min-height: 0;
+    }
+
+    .coffee-cup {
+      font-size: 32px;
+      display: inline-block;
+      animation: cup-wobble 2s ease-in-out infinite;
+      margin-bottom: 8px;
+    }
+
+    .coffee-cup .steam {
+      display: block;
+      font-size: 14px;
+      line-height: 1;
+      margin-bottom: -2px;
+      animation: steam-rise 1.5s ease-in-out infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes cup-wobble {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-6deg); }
+      75% { transform: rotate(6deg); }
+    }
+
+    @keyframes steam-rise {
+      0%, 100% { transform: translateY(0); opacity: 0.3; }
+      50% { transform: translateY(-4px); opacity: 0.7; }
+    }
+
+    .coffee p {
+      color: #5a564d;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .coffee a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFDD00;
+      color: #111110;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: opacity 0.15s;
+    }
+
+    .coffee a:hover { opacity: 0.85; }
+
+    .footer-links {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .footer-links a {
+      color: #6b665c;
+      font-size: 12px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover { color: #a78bfa; }
+
+    .footer-links .gh-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      vertical-align: -2px;
+      margin-right: 4px;
+      fill: currentColor;
+    }
+
+    .game-wrap {
+      display: none;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .game-wrap.active { display: block; }
+
+    .game-wrap canvas {
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .game-hint {
+      color: #4a473f;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Logo Fetch</h1>
+    <p class="subtitle">No more Googling, cropping, or removing backgrounds. Clean, transparent logos in seconds.</p>
+
+    <label for="companies">Company names</label>
+    <textarea id="companies" placeholder="Aurora Solar, Fervo Energy, Watershed"></textarea>
+    <p class="hint">Commas, newlines, whatever. We'll figure it out. We're powered by AI or something.</p>
+
+    <div class="mode-section">
+      <label>Logo mode</label>
+      <div class="toggle-group">
+        <input type="radio" name="mode" id="mode-light" value="light" checked>
+        <label for="mode-light">Light</label>
+        <input type="radio" name="mode" id="mode-dark" value="dark">
+        <label for="mode-dark">Dark</label>
+      </div>
+    </div>
+
+    <button type="button" id="download-btn">
+      <span class="btn-text">Download Logos</span>
+      <span class="spinner"></span>
+    </button>
+
+    <div class="status" id="status"></div>
+
+    <div class="game-wrap" id="game-wrap">
+      <canvas id="game" width="440" height="120"></canvas>
+      <p class="game-hint">Press space or tap to jump</p>
+    </div>
+
+    <div class="coffee" id="coffee">
+      <div class="coffee-inner">
+        <div class="coffee-cup"><span class="steam">~</span>&#9749;</div>
+        <p>If this saved you from screenshotting logos like a caveman:</p>
+        <a href="https://buymeacoffee.com/helenamerk" target="_blank" rel="noopener">Buy me a coffee</a>
+      </div>
+    </div>
+
+    <div class="footer-links">
+      <a href="https://github.com/helenamerk/logo-fetch" target="_blank" rel="noopener"><svg class="gh-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Open source &mdash; run it locally</a>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById("companies");
+    const btn = document.getElementById("download-btn");
+    const status = document.getElementById("status");
+
+    function setStatus(msg, type) {
+      status.textContent = msg;
+      status.className = "status " + (type || "");
+    }
+
+    function getMode() {
+      return document.querySelector('input[name="mode"]:checked').value;
+    }
+
+    function parseCompanies(text) {
+      return text
+        .split(/[,\n]/)
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    /* ---- fetch game (chrome dino but it's a dog) ---- */
+    const gameWrap = document.getElementById("game-wrap");
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    let gameRunning = false, gameDead = false, gameRaf = 0, bestScore = 0;
+
+    const C = {
+      bg: "#111110", ground: "#2a2925", dog: "#e8e5e0", stick: "#a78bfa",
+      bone: "#8a8579", score: "#4a473f", dead: "#e05545"
+    };
+
+    const dog = { x: 50, y: 0, vy: 0, w: 28, h: 24, grounded: true, frame: 0 };
+    const GRAVITY = 0.6, JUMP = -10.5, GROUND = 94;
+    let obstacles = [], frameCount = 0, score = 0, speed = 3.5;
+
+    function drawDog(x, y, frame) {
+      ctx.fillStyle = gameDead ? C.dead : C.dog;
+      ctx.fillRect(x + 4, y + 4, 18, 12);
+      ctx.fillRect(x + 20, y, 10, 10);
+      ctx.fillRect(x + 22, y - 3, 4, 4);
+      ctx.fillStyle = C.bg;
+      ctx.fillRect(x + 26, y + 3, 2, 2);
+      ctx.fillStyle = gameDead ? C.dead : C.dog;
+      ctx.fillRect(x + 28, y + 5, 3, 3);
+      const tailUp = frame % 2 === 0;
+      ctx.fillRect(x, tailUp ? y : y + 4, 3, tailUp ? 6 : 4);
+      if (gameDead) {
+        // x_x eyes
+        ctx.fillStyle = C.bg;
+        ctx.fillRect(x + 25, y + 2, 1, 1);
+        ctx.fillRect(x + 27, y + 4, 1, 1);
+        ctx.fillRect(x + 27, y + 2, 1, 1);
+        ctx.fillRect(x + 25, y + 4, 1, 1);
+        // legs splayed
+        ctx.fillStyle = gameDead ? C.dead : C.dog;
+        ctx.fillRect(x + 4, y + 16, 3, 8);
+        ctx.fillRect(x + 19, y + 16, 3, 8);
+      } else if (dog.grounded) {
+        if (frame % 2 === 0) {
+          ctx.fillRect(x + 6, y + 16, 3, 8);
+          ctx.fillRect(x + 17, y + 16, 3, 6);
+        } else {
+          ctx.fillRect(x + 6, y + 16, 3, 6);
+          ctx.fillRect(x + 17, y + 16, 3, 8);
+        }
+      } else {
+        ctx.fillRect(x + 7, y + 14, 3, 5);
+        ctx.fillRect(x + 16, y + 14, 3, 5);
+      }
+    }
+
+    function drawStick(x, y) {
+      ctx.strokeStyle = C.stick;
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x, y + 18);
+      ctx.lineTo(x + 10, y);
+      ctx.stroke();
+    }
+
+    function drawBone(x, y) {
+      ctx.fillStyle = C.bone;
+      ctx.fillRect(x + 3, y + 6, 14, 4);
+      ctx.fillRect(x, y + 4, 5, 3);
+      ctx.fillRect(x, y + 9, 5, 3);
+      ctx.fillRect(x + 15, y + 4, 5, 3);
+      ctx.fillRect(x + 15, y + 9, 5, 3);
+    }
+
+    function drawHydrant(x, y) {
+      ctx.fillStyle = "#e05545";
+      ctx.fillRect(x + 4, y + 4, 10, 16);
+      ctx.fillRect(x + 2, y, 14, 5);
+      ctx.fillRect(x + 5, y - 3, 8, 4);
+      ctx.fillRect(x, y + 8, 4, 4);
+      ctx.fillRect(x + 14, y + 8, 4, 4);
+      ctx.fillRect(x + 2, y + 18, 14, 3);
+    }
+
+    function drawGameOver() {
+      // dim overlay
+      ctx.fillStyle = "rgba(17,17,16,0.55)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = C.dog;
+      ctx.font = "bold 16px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvas.width / 2, 42);
+
+      ctx.fillStyle = C.score;
+      ctx.font = "12px monospace";
+      ctx.fillText("score: " + score + (bestScore > score ? "   best: " + bestScore : score > 0 && score >= bestScore ? "   new best!" : ""), canvas.width / 2, 62);
+
+      ctx.fillStyle = "#6b665c";
+      ctx.font = "11px monospace";
+      ctx.fillText("press space or tap to play again", canvas.width / 2, 84);
+
+      ctx.textAlign = "start";
+    }
+
+    function jump() {
+      if (!gameRunning) return;
+      if (gameDead) {
+        resetGame();
+        return;
+      }
+      if (dog.grounded) {
+        dog.vy = JUMP;
+        dog.grounded = false;
+      }
+    }
+
+    function spawnObstacle() {
+      const types = ["stick", "bone", "hydrant"];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const h = type === "hydrant" ? 21 : 18;
+      obstacles.push({ x: canvas.width + 10, type, w: type === "hydrant" ? 18 : 20, h });
+    }
+
+    function resetGame() {
+      gameDead = false;
+      obstacles = [];
+      score = 0; speed = 3.5; frameCount = 0;
+      dog.y = GROUND; dog.vy = 0; dog.grounded = true; dog.frame = 0;
+      gameLoop();
+    }
+
+    function gameLoop() {
+      if (!gameRunning || gameDead) return;
+      ctx.fillStyle = C.bg;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // ground
+      ctx.fillStyle = C.ground;
+      ctx.fillRect(0, GROUND + 26, canvas.width, 1);
+      for (let i = 0; i < canvas.width; i += 24) {
+        const dx = (i - frameCount * speed % 24 + canvas.width * 10) % canvas.width;
+        ctx.fillRect(dx, GROUND + 29, 10, 1);
+      }
+
+      // dog physics
+      dog.vy += GRAVITY;
+      dog.y += dog.vy;
+      if (dog.y >= GROUND) {
+        dog.y = GROUND;
+        dog.vy = 0;
+        dog.grounded = true;
+      }
+
+      if (frameCount % 6 === 0) dog.frame++;
+      drawDog(dog.x, dog.y, dog.frame);
+
+      // obstacles
+      if (frameCount % Math.floor(70 + Math.random() * 40) === 0) spawnObstacle();
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const o = obstacles[i];
+        o.x -= speed;
+        const oy = GROUND + 26 - o.h;
+        if (o.type === "stick") drawStick(o.x, oy);
+        else if (o.type === "bone") drawBone(o.x, oy);
+        else drawHydrant(o.x, oy);
+
+        // collision
+        const dx = dog.x + 8, dy = dog.y + 4, dw = 18, dh = 20;
+        if (dx < o.x + o.w - 2 && dx + dw > o.x + 2 && dy + dh > oy + 4) {
+          if (o.type === "bone") {
+            // collect the bone!
+            obstacles.splice(i, 1);
+            score += 3;
+            continue;
+          }
+          gameDead = true;
+          if (score > bestScore) bestScore = score;
+          drawDog(dog.x, dog.y, dog.frame);
+          drawGameOver();
+          return;
+        }
+
+        if (o.x + o.w < 0) {
+          obstacles.splice(i, 1);
+          score++;
+        }
+      }
+
+      // score + best
+      ctx.fillStyle = C.score;
+      ctx.font = "11px monospace";
+      const scoreText = bestScore > 0 ? "best: " + bestScore + "   score: " + score : "score: " + score;
+      ctx.fillText(scoreText, canvas.width - (bestScore > 0 ? 160 : 80), 14);
+
+      speed = 3.5 + Math.min(score * 0.15, 4);
+      frameCount++;
+      gameRaf = requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      gameWrap.classList.add("active");
+      gameDead = false;
+      obstacles = [];
+      score = 0; speed = 3.5; frameCount = 0;
+      dog.y = GROUND; dog.vy = 0; dog.grounded = true; dog.frame = 0;
+      gameRunning = true;
+      gameLoop();
+    }
+
+    function hideGame() {
+      gameRunning = false;
+      gameDead = false;
+      cancelAnimationFrame(gameRaf);
+      gameWrap.classList.remove("active");
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && gameRunning) { e.preventDefault(); jump(); }
+    });
+    canvas.addEventListener("pointerdown", jump);
+
+    /* ---- main download flow ---- */
+    btn.addEventListener("click", async () => {
+      const companies = parseCompanies(textarea.value);
+      if (companies.length === 0) {
+        setStatus("Pop some company names in there first!", "error");
+        return;
+      }
+
+      btn.classList.add("loading");
+      btn.disabled = true;
+      setStatus("Fetching logos\u2026 play fetch while you wait!", "info");
+      startGame();
+
+      try {
+        const res = await fetch("/api/download-logos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ companies, mode: getMode() }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => null);
+          const msg = data?.error || "Something went wrong (" + res.status + ")";
+          setStatus(msg, "error");
+          return;
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Logos.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        setStatus("All done! Your logos are downloading. Keep playing!", "success");
+        document.getElementById("coffee").classList.add("visible");
+      } catch (err) {
+        setStatus("Network hiccup: " + err.message, "error");
+      } finally {
+        btn.classList.remove("loading");
+        btn.disabled = false;
+        // game keeps running — player can keep going or close the page
+      }
+    });
+  </script>
+</body>
+</html>

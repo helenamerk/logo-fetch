@@ -10,6 +10,9 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:web": "tsc -p tsconfig.web.json",
+    "dev": "node --watch dist-web/server.js",
+    "start": "node dist-web/server.js",
     "test": "node --test dist/**/*.test.js"
   },
   "keywords": [
@@ -22,10 +25,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "brand.dev": "^0.25.0"
+    "archiver": "^7.0.1",
+    "brand.dev": "^0.25.0",
+    "express": "^5.1.0"
   },
   "devDependencies": {
+    "@types/archiver": "^6.0.3",
+    "@types/express": "^5.0.2",
     "@types/node": "^25.2.2",
+    "@vercel/node": "^5.5.33",
     "typescript": "^5.9.3"
   }
 }

@@ -86,6 +86,12 @@ const logo2 = await getLogo("Stripe", { domain: "stripe.com" });
 const dark = await getLogo("Stripe", { mode: "dark" });
 ```
 
+## Support
+
+If this tool saved you time, consider buying me a coffee!
+
+<a href="https://buymeacoffee.com/helenamerk"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee"></a>
+
 ## How it works
 
 1. **Company name lookup** — Brand.dev resolves the company name to its brand profile
